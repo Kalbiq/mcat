@@ -15,6 +15,7 @@ pub struct Config {
 pub struct Flags {
     line_numbs: bool,
     line_by_line: bool,
+    single_line: bool,
 }
 
 impl Config {
@@ -45,11 +46,13 @@ impl Flags {
 
         let mut line_numbs = false;
         let mut line_by_line = false;
+        let mut single_line = false;
 
         for arg in args {
             match arg.as_str() {
                 "-ln" => line_numbs = true,
                 "-lbl" => line_by_line = true,
+                "-sl" => single_line = true,
                 &_ => return Err("Invalid argument in parameters"),
             }
         }
@@ -57,6 +60,7 @@ impl Flags {
         Ok(Flags {
             line_numbs,
             line_by_line,
+            single_line,
         })
     }
 }
@@ -66,7 +70,13 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let contents = fs::read_to_string(config.filename)?;
     let mut ln = 1;
+    // Not used for anything other than -lbl
     let mut buffer = String::new();
+
+    let last_char = match config.flags.single_line {
+        true => " ",
+        _ => "\n",
+    };
 
     for line in contents.lines() {
 
@@ -74,9 +84,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
             print!("{}: ", Colour::Cyan.paint(ln.to_string()));
         }
 
-        println!("{}", line);
+        print!("{}{}", line, last_char);
 
-        if config.flags.line_by_line {
+        // It doesn't work with -lbl because print! doesnt flush untill its done
+        if config.flags.line_by_line && !config.flags.single_line {
             stdin().read_line(&mut buffer)?;
         }
 
