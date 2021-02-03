@@ -4,6 +4,8 @@ use std::process;
 use std::error::Error;
 use std::io::stdin;
 
+use ansi_term::Colour;
+
 
 pub struct Config {
     pub filename: String,
@@ -69,7 +71,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     for line in contents.lines() {
 
         if config.flags.line_numbs {
-            print!("{}: ", ln);
+            print!("{}: ", Colour::Cyan.paint(ln.to_string()));
         }
 
         println!("{}", line);
