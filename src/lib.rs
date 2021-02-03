@@ -81,7 +81,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     for line in contents.lines() {
 
         if config.flags.line_numbs {
-            print!("{}: ", Colour::Cyan.paint(ln.to_string()));
+            let temp = format!("{:#3}", ln);
+            print!("{}: ", Colour::Cyan.paint(temp.to_string()));
         }
 
         print!("{}{}", line, last_char);
