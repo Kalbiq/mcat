@@ -1,17 +1,21 @@
-use std::fs;
-use std::env;
-use std::process;
+//! My own attempt at making a cat-like tool
+//! I only made it in order to learn Rust
+//! If you want to give me some advice or propose a better way of doing something
+//! just make an issue on the repo. I would be very grateful :D
+
+use std::{fs, env, process};
 use std::error::Error;
 use std::io::stdin;
 
 use ansi_term::Colour;
 
-
+/// Run configuration supplied to the main function
 pub struct Config {
     pub filename: String,
     pub flags: Flags,
 }
 
+/// Parameter flags
 pub struct Flags {
     line_numbs: bool,
     line_by_line: bool,
@@ -41,13 +45,14 @@ impl Config {
 }
 
 impl Flags {
-
+    /// Returns a Flags struct with raised flags
     fn parse(args: env::Args) -> Result<Flags, &'static str> {
 
         let mut line_numbs = false;
         let mut line_by_line = false;
         let mut single_line = false;
 
+        // Searches for the flags in arguments
         for arg in args {
             match arg.as_str() {
                 "-ln" => line_numbs = true,
@@ -73,6 +78,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     // Not used for anything other than -lbl
     let mut buffer = String::new();
 
+    // Controls what's appended to the line from contents 
+    // if true it will only append a spacebar
     let last_char = match config.flags.single_line {
         true => " ",
         _ => "\n",
@@ -80,8 +87,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     for line in contents.lines() {
 
+        // Display the line number
         if config.flags.line_numbs {
-            let temp = format!("{:#3}", ln);
+            // Adds some padding
+            let temp = format!("{:#4}", ln);
             print!("{}: ", Colour::Cyan.paint(temp.to_string()));
         }
 
