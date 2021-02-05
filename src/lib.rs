@@ -9,6 +9,8 @@ use std::io::stdin;
 
 use ansi_term::Colour;
 
+mod helper;
+
 /// Run configuration supplied to the main function
 pub struct Config {
     pub filename: String,
@@ -58,6 +60,10 @@ impl Flags {
                 "-ln" => line_numbs = true,
                 "-lbl" => line_by_line = true,
                 "-sl" => single_line = true,
+                "-h" => {
+                    helper::display_help();
+                    process::exit(0);
+                }
                 &_ => return Err("Invalid argument in parameters"),
             }
         }
